@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MangoGrove — Rent a Mango Tree</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green-deep: #1a3a1f;
+    --green-mid: #2d5a35;
+    --green-light: #4a8c55;
+    --mango: #f5a623;
+    --mango-deep: #e8841a;
+    --cream: #fdf6e3;
+    --cream-dark: #f5e8c0;
+    --text-dark: #1a1a0f;
+    --text-mid: #4a4a2a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(253,246,227,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(245,166,35,0.2);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--green-deep);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--mango); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none; color: var(--text-mid);
+    font-size: 0.9rem; font-weight: 400;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--green-deep); }
+  .nav-cta {
+    background: var(--green-deep) !important;
+    color: var(--cream) !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 100px;
+    font-weight: 500 !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--green-mid) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 3rem 4rem;
+    gap: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(74,140,85,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-text { animation: fadeUp 0.8s ease both; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(245,166,35,0.15);
+    border: 1px solid rgba(245,166,35,0.4);
+    color: var(--mango-deep);
+    padding: 0.3rem 0.9rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow::before { content: '🌿'; font-size: 14px; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.2rem);
+    line-height: 1.1;
+    color: var(--green-deep);
+    margin-bottom: 1.5rem;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--mango-deep);
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--green-deep);
+    color: var(--cream);
+    border: none; cursor: pointer;
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 500;
+    transition: transform 0.2s, background 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--green-mid); transform: translateY(-2px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--green-deep);
+    border: 1.5px solid var(--green-deep);
+    cursor: pointer;
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 500;
+    transition: transform 0.2s, background 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-ghost:hover { background: rgba(26,58,31,0.06); transform: translateY(-2px); }
+
+  /* HERO VISUAL */
+  .hero-visual {
+    animation: fadeUp 0.8s 0.2s ease both;
+    position: relative;
+  }
+
+  .tree-card {
+    background: var(--green-deep);
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 4/5;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .tree-illustration {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9rem;
+    padding-bottom: 4rem;
+    filter: saturate(1.2);
+  }
+
+  .tree-card-bottom {
+    position: relative; z-index: 2;
+    background: rgba(253,246,227,0.95);
+    backdrop-filter: blur(4px);
+    padding: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .tree-card-bottom h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--green-deep);
+  }
+  .tree-card-bottom p {
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    margin-top: 2px;
+  }
+  .price-badge {
+    background: var(--mango);
+    color: var(--green-deep);
+    padding: 0.4rem 0.9rem;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+
+  .floating-tag {
+    position: absolute;
+    background: var(--cream);
+    border: 1px solid rgba(245,166,35,0.3);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    animation: float 3s ease-in-out infinite;
+  }
+  .tag-1 { top: 2rem; right: -1rem; animation-delay: 0s; }
+  .tag-2 { top: 45%; left: -2rem; animation-delay: 1.5s; }
+
+  /* STATS */
+  .stats {
+    background: var(--green-deep);
+    padding: 3rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+  .stat {
+    text-align: center;
+    padding: 1rem;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--mango);
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.85rem;
+    color: rgba(253,246,227,0.7);
+    margin-top: 4px;
+  }
+
+  /* HOW IT WORKS */
+  .section { padding: 6rem 3rem; }
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mango-deep);
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    color: var(--green-deep);
+    line-height: 1.2;
+    margin-bottom: 3rem;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+  .step { position: relative; }
+  .step-num {
+    width: 48px; height: 48px;
+    background: var(--cream-dark);
+    border: 2px solid var(--mango);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--green-deep);
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+  }
+  .step-icon { font-size: 1.5rem; margin-bottom: 0.8rem; }
+  .step h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--green-deep);
+    margin-bottom: 0.5rem;
+  }
+  .step p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.7; }
+
+  /* PLANS */
+  .plans-section {
+    background: var(--green-deep);
+    padding: 6rem 3rem;
+  }
+  .plans-section h2 { color: var(--cream); }
+  .plans-section .section-label { color: var(--mango); }
+
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .plan-card {
+    background: rgba(253,246,227,0.06);
+    border: 1px solid rgba(253,246,227,0.12);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .plan-card:hover { transform: translateY(-4px); border-color: rgba(245,166,35,0.4); }
+  .plan-card.featured {
+    background: var(--mango);
+    border-color: var(--mango);
+  }
+  .plan-card.featured h3,
+  .plan-card.featured .plan-price,
+  .plan-card.featured .plan-price span,
+  .plan-card.featured li { color: var(--green-deep) !important; }
+  .plan-card.featured .plan-desc { color: rgba(26,58,31,0.7) !important; }
+  .plan-card.featured .plan-check { color: var(--green-deep) !important; }
+
+  .plan-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--green-deep);
+    color: var(--cream);
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.2rem 0.8rem;
+    border-radius: 100px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .plan-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+    margin-bottom: 0.4rem;
+  }
+  .plan-desc { font-size: 0.85rem; color: rgba(253,246,227,0.6); margin-bottom: 1.5rem; }
+  .plan-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    color: var(--mango);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .plan-price span { font-size: 1rem; font-weight: 400; color: rgba(253,246,227,0.6); }
+  .plan-divider { border: none; border-top: 1px solid rgba(253,246,227,0.1); margin: 1.5rem 0; }
+  .plan-card.featured .plan-divider { border-color: rgba(26,58,31,0.15); }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2rem; }
+  .plan-features li {
+    font-size: 0.9rem;
+    color: rgba(253,246,227,0.85);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .plan-check { color: var(--mango); font-weight: 700; }
+
+  .plan-btn {
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 100px;
+    border: 1.5px solid rgba(253,246,227,0.3);
+    background: transparent;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .plan-btn:hover { background: rgba(253,246,227,0.1); }
+  .plan-card.featured .plan-btn {
+    background: var(--green-deep);
+    color: var(--cream);
+    border-color: var(--green-deep);
+  }
+  .plan-card.featured .plan-btn:hover { background: var(--green-mid); }
+
+  /* WHY */
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .why-card {
+    background: white;
+    border: 1px solid rgba(26,58,31,0.08);
+    border-radius: 20px;
+    padding: 2rem;
+  }
+  .why-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .why-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--green-deep);
+    margin-bottom: 0.5rem;
+  }
+  .why-card p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.7; }
+
+  /* TESTIMONIALS */
+  .testi-section { padding: 6rem 3rem; background: var(--cream-dark); }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .testi-card {
+    background: var(--cream);
+    border-radius: 20px;
+    padding: 1.8rem;
+    border: 1px solid rgba(245,166,35,0.15);
+  }
+  .stars { color: var(--mango); font-size: 1rem; margin-bottom: 1rem; }
+  .testi-card p { font-size: 0.95rem; color: var(--text-mid); line-height: 1.7; font-style: italic; margin-bottom: 1.2rem; }
+  .testi-author { display: flex; align-items: center; gap: 10px; }
+  .testi-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--green-mid);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cream); font-size: 0.85rem; font-weight: 500;
+  }
+  .testi-name { font-size: 0.9rem; font-weight: 500; color: var(--green-deep); }
+  .testi-loc { font-size: 0.78rem; color: var(--text-mid); }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: 6rem 3rem;
+    text-align: center;
+    background: var(--green-deep);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '🥭';
+    position: absolute;
+    font-size: 12rem;
+    opacity: 0.06;
+    top: -2rem; right: -2rem;
+    pointer-events: none;
+  }
+  .cta-section h2 { color: var(--cream); max-width: 600px; margin: 0 auto 1rem; }
+  .cta-section p { color: rgba(253,246,227,0.7); max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.7; }
+
+  /* FOOTER */
+  footer {
+    background: #0f2412;
+    color: rgba(253,246,227,0.6);
+    padding: 2rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.85rem;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    font-size: 1.1rem;
+  }
+  .footer-logo span { color: var(--mango); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 3rem; gap: 2rem; }
+    .hero-visual { max-width: 360px; margin: 0 auto; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .plans-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr 1fr; }
+    .testi-grid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr; gap: 1rem; }
+    .stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .section, .plans-section, .testi-section, .cta-section { padding: 4rem 1.5rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🥭 Mango<span>Grove</span></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#plans">Plans</a></li>
+    <li><a href="#why">Why us</a></li>
+    <li><a href="#plans" class="nav-cta">Rent a tree</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Farm-to-doorstep, naturally</div>
+    <h1>Your very own<br><em>mango tree</em>,<br>for a full year</h1>
+    <p class="hero-desc">Rent a real mango tree on our farm. We grow it, nurture it, and harvest it — you enjoy a year's worth of fresh, sun-ripened mangos delivered straight to you.</p>
+    <div class="hero-actions">
+      <a href="#plans" class="btn-primary">Choose your tree →</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="tree-card">
+      <div class="tree-illustration">🌳</div>
+      <div class="tree-card-bottom">
+        <div>
+          <h3>Alphonso Reserve</h3>
+          <p>Tree #A-47 · Ratnagiri Farm</p>
+        </div>
+        <div class="price-badge">₹2,499/yr</div>
+      </div>
+    </div>
+    <div class="floating-tag tag-1">🥭 Est. 40–60 kg harvest</div>
+    <div class="floating-tag tag-2">📍 Your named tree</div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <span class="stat-num">320+</span>
+    <span class="stat-label">Trees available to rent</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">1,200+</span>
+    <span class="stat-label">Happy tree owners</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">100%</span>
+    <span class="stat-label">Naturally grown, no pesticides</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <p class="section-label">The process</p>
+  <h2>From our farm<br>to your table</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-icon">🌿</div>
+      <h3>Pick your tree</h3>
+      <p>Browse available trees, choose your variety — Alphonso, Kesar, Dasheri — and make it officially yours for 12 months.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-icon">🪴</div>
+      <h3>We take care of it</h3>
+      <p>Our farmers water, fertilize, and tend to your tree year-round. You get live photo updates during the growing season.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-icon">🥭</div>
+      <h3>Harvest time</h3>
+      <p>When mangos ripen (May–July), we pick them fresh and pack them carefully on the same day.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-icon">📦</div>
+      <h3>Delivered to you</h3>
+      <p>Your mangos arrive at your door within 24–48 hours of harvest, in 1–2 batches across the season.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans-section" id="plans">
+  <p class="section-label">Pricing</p>
+  <h2>Choose your plan</h2>
+  <div class="plans-grid">
+    <div class="plan-card">
+      <h3>Sapling</h3>
+      <p class="plan-desc">Perfect for individuals or small families</p>
+      <div class="plan-price">₹1,499<span>/year</span></div>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li><span class="plan-check">✓</span> 1 Kesar mango tree</li>
+        <li><span class="plan-check">✓</span> 20–30 kg estimated yield</li>
+        <li><span class="plan-check">✓</span> 1 delivery batch</li>
+        <li><span class="plan-check">✓</span> Tree name certificate</li>
+        <li><span class="plan-check">✓</span> Monthly photo updates</li>
+      </ul>
+      <button class="plan-btn">Get started</button>
+    </div>
+
+    <div class="plan-card featured">
+      <div class="plan-badge">Most popular</div>
+      <h3>Grove</h3>
+      <p class="plan-desc">For mango lovers and growing families</p>
+      <div class="plan-price">₹2,499<span>/year</span></div>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li><span class="plan-check">✓</span> 1 Alphonso reserve tree</li>
+        <li><span class="plan-check">✓</span> 40–60 kg estimated yield</li>
+        <li><span class="plan-check">✓</span> 2 delivery batches</li>
+        <li><span class="plan-check">✓</span> Named tree + GPS location</li>
+        <li><span class="plan-check">✓</span> Weekly harvest updates</li>
+        <li><span class="plan-check">✓</span> Farm visit (1 per year)</li>
+      </ul>
+      <button class="plan-btn">Rent this tree</button>
+    </div>
+
+    <div class="plan-card">
+      <h3>Orchard</h3>
+      <p class="plan-desc">Gift boxes, bulk gifting, or corporate</p>
+      <div class="plan-price">₹5,999<span>/year</span></div>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li><span class="plan-check">✓</span> 3 trees of your choice</li>
+        <li><span class="plan-check">✓</span> 100–150 kg total yield</li>
+        <li><span class="plan-check">✓</span> 3 delivery batches</li>
+        <li><span class="plan-check">✓</span> Premium gift packaging</li>
+        <li><span class="plan-check">✓</span> Priority support</li>
+        <li><span class="plan-check">✓</span> Unlimited farm visits</li>
+      </ul>
+      <button class="plan-btn">Talk to us</button>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="section" id="why">
+  <p class="section-label">Why MangoGrove</p>
+  <h2>More than just mangos</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">🌱</div>
+      <h3>100% natural farming</h3>
+      <p>No pesticides, no artificial ripening. Our trees are grown using traditional methods passed down over generations.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">📸</div>
+      <h3>Watch your tree grow</h3>
+      <p>Get regular photo and video updates of your specific tree — from first bud to ripe harvest. It's yours to watch.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🚚</div>
+      <h3>Same-day harvest delivery</h3>
+      <p>Mangos are packed and shipped within hours of picking. No cold storage, no middlemen — just pure freshness.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🤝</div>
+      <h3>Support real farmers</h3>
+      <p>Your rental directly funds the livelihoods of our farming families in Andhra Pradesh. Farm-to-fork transparency.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🎁</div>
+      <h3>Makes a beautiful gift</h3>
+      <p>Give someone a tree certificate for birthdays, anniversaries, or festivals. A gift that keeps giving all season long.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🏡</div>
+      <h3>Visit your tree</h3>
+      <p>Book a farm visit, meet your tree in person, and experience the harvest first-hand with your family.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <p class="section-label">What renters say</p>
+  <h2>Loved by families<br>across India</h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"We gifted a tree to my parents for their anniversary and they still talk about it. The mangos were unbelievably good — nothing like what you get in the market."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">SR</div>
+        <div>
+          <div class="testi-name">Sneha Reddy</div>
+          <div class="testi-loc">Hyderabad</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"The weekly photos of our tree were a highlight for my kids. They named it 'Sunny' and tracked every single mango. 10/10 experience, renewing next year."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">AK</div>
+        <div>
+          <div class="testi-name">Arjun Kulkarni</div>
+          <div class="testi-loc">Pune</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p>"Ordered the Orchard plan for our office. The team loved it and clients were impressed by the gifting idea. Freshest Alphonso I've ever had."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">PM</div>
+        <div>
+          <div class="testi-name">Priya Mehta</div>
+          <div class="testi-loc">Bangalore</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <p class="section-label">Limited trees available</p>
+  <h2>This season's trees are filling up fast</h2>
+  <p>Mango season runs May–July. Reserve your tree before they're gone — rentals open year-round for the upcoming harvest.</p>
+  <a href="#plans" class="btn-primary" style="font-size: 1.05rem; padding: 1rem 2.5rem;">Rent your tree now →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🥭 Mango<span>Grove</span></div>
+  <div>© 2025 MangoGrove. Grown with love in Andhra Pradesh.</div>
+  <div>hello@mangogrove.in · +91 98765 43210</div>
+</footer>
+
+</body>
+</html>
